@@ -1,0 +1,31 @@
+{
+  "name": "email-sync-bitable-plugin",
+  "version": "1.0.0",
+  "description": "多维表格邮件同步侧边栏插件",
+  "main": "index.js",
+  "type": "module",
+  "output": "dist",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "serve": "serve dist -p 3000"
+  },
+  "keywords": ["lark", "bitable", "email", "sync", "plugin"],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@lark-base-open/js-sdk": "^0.3.8",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "axios": "^1.6.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "@vitejs/plugin-react": "^4.2.0",
+    "typescript": "^5.0.0",
+    "vite": "^5.0.0",
+    "serve": "^14.2.0"
+  }
+}
