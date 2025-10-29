@@ -5,7 +5,7 @@ yarn-debug.log*
 yarn-error.log*
 
 # Production build
-dist/
+# dist/ - 注释掉以便上传构建产物到GitHub
 
 # Environment variables
 .env
