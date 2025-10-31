@@ -1,0 +1,68 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Build
+      run: npm run build
+      
+    - name: Create .nojekyll file
+      run: touch dist/.nojekyll
+      
+    - name: Create _headers file for iframe support
+      run: |
+        cat > dist/_headers << 'EOF'
+        /*
+          X-Frame-Options: ALLOWALL
+          Content-Security-Policy: frame-ancestors *
+        EOF
+        
+    - name: Add iframe detection script to index.html
+      run: |
+        sed -i 's|</head>|<script>
+        // 检测是否在 iframe 中运行
+        if (window.self !== window.top) {
+          console.log("Running in iframe - this is expected for plugin usage");
+        }
+        // 如果被 X-Frame-Options 阻止，尝试重定向到新窗口
+        window.addEventListener("error", function(e) {
+          if (e.message && e.message.includes("frame")) {
+            const newWindow = window.open(window.location.href, "_blank");
+            if (newWindow) {
+              window.parent.postMessage({
+                type: "PLUGIN_REDIRECT",
+                url: window.location.href
+              }, "*");
+            }
+          }
+        });
+        </script>
+        </head>|' dist/index.html
+        
+    - name: Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3
+      if: github.ref == 'refs/heads/main'
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./dist
+        force_orphan: true
